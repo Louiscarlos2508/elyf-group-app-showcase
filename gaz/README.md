@@ -426,6 +426,8 @@ graph LR
 ## 🔗 Liens Utiles
 
 - 📁 [Code source du module](../../lib/features/gaz/)
+- 📐 [Architecture](./docs/ARCHITECTURE.md)
+- 📋 [Notes d'implémentation](./docs/IMPLEMENTATION.md)
 - 🏠 [Retour au Portfolio](../)
 
 ---

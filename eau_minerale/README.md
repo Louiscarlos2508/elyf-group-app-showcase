@@ -345,6 +345,8 @@ graph TD
 ## 🔗 Liens Utiles
 
 - 📁 [Code source du module](../../lib/features/eau_minerale/)
+- 📐 [Architecture](./docs/ARCHITECTURE.md)
+- 📋 [Notes d'implémentation](./docs/IMPLEMENTATION.md)
 - 🏠 [Retour au Portfolio](../)
 
 ---

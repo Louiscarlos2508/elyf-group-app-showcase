@@ -332,10 +332,10 @@ class MaintenanceRequest {
 
 ## 🔗 Liens Utiles
 
-- [Documentation Technique Complète](../../docs/technical/)
-- [Wiki du Projet](../../wiki/)
-- [Architecture Globale](../../docs/DOCUMENTATION_STRUCTURE.md)
-- [Retour au Portfolio Principal](../)
+- 📁 [Code source du module](../../lib/features/immobilier/)
+- 📐 [Architecture](./docs/ARCHITECTURE.md)
+- 📋 [Notes d'implémentation](./docs/IMPLEMENTATION.md)
+- 🏠 [Retour au Portfolio](../)
 
 ---
 
