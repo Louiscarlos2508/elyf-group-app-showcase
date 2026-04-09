@@ -1,0 +1,40 @@
+# Portfolio .gitignore
+# This file ensures that when the Project_Portfolio is shared as a standalone repo,
+# it doesn't include any source code or build artifacts
+
+# Exclude all source code
+lib/
+test/
+android/
+ios/
+web/
+windows/
+linux/
+macos/
+
+# Exclude build artifacts
+build/
+.dart_tool/
+.flutter-plugins-dependencies
+
+# Exclude configuration files
+pubspec.yaml
+pubspec.lock
+analysis_options.yaml
+dependency_validator.yaml
+
+# Exclude Firebase config (contains sensitive data)
+firebase.json
+firestore.rules
+firestore.rules.production
+.env
+.env.example
+
+# Exclude scripts
+scripts/
+
+# Keep only documentation and assets
+!Project_Portfolio/
+!docs/
+!wiki/
+!README.md
