@@ -463,8 +463,8 @@ graph TD
 ## 🔗 Liens Utiles
 
 - 📁 [Code source du module](../../lib/features/orange_money/)
-- 📐 [Architecture](../../lib/features/orange_money/ARCHITECTURE.md)
-- 📋 [Notes d'implémentation](../../lib/features/orange_money/IMPLEMENTATION.md)
+- 📐 [Architecture](./docs/ARCHITECTURE.md)
+- 📋 [Notes d'implémentation](./docs/IMPLEMENTATION.md)
 - 🏠 [Retour au Portfolio](../)
 
 ---

@@ -294,8 +294,8 @@ graph TD
 ## 🔗 Liens Utiles
 
 - 📁 [Code source du module](../../lib/features/boutique/)
-- 📐 [Architecture](../../lib/features/boutique/ARCHITECTURE.md)
-- 📋 [Notes d'implémentation](../../lib/features/boutique/IMPLEMENTATION.md)
+- 📐 [Architecture](./docs/ARCHITECTURE.md)
+- 📋 [Notes d'implémentation](./docs/IMPLEMENTATION.md)
 - 🏠 [Retour au Portfolio](../)
 
 ---
