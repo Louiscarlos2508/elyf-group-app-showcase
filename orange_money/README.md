@@ -21,7 +21,7 @@ illustrent le parcours **Dealer**.
 - 📄 **Contrats** — affiliation des agents avec taux de commission
 - ⏱️ **Pointages de Liquidité** — déclaration matin + bilan soir avec calcul théorique
 - 💵 **Trésorerie** — soldes Cash / Orange Money + recharges agents
-- 💰 **Commissions Hybrides** — estimation système vs montant SMS opérateur
+- 💰 **Commissions** — saisie mensuelle manuelle avec preuve photo
 - 📊 **Historique & Réconciliation** — écarts détectés et justifiés
 
 ---
@@ -147,30 +147,32 @@ Implémenté dans
   motif, bénéficiaire / fournisseur, notes
 - Historique filtrable `Aujourd'hui / Cette semaine / Ce mois`
 
-### 7. Commissions — Modèle Hybride
+### 7. Commissions — Saisie Mensuelle Manuelle
 
 Implémenté dans
 [commissions_screen.dart](../../lib/features/orange_money/presentation/screens/sections/commissions_screen.dart).
 
-Le module utilise un **modèle hybride** où le système calcule une estimation
-mais où la valeur officielle reste celle déclarée par l'agent depuis le SMS de
-l'opérateur. Modèle :
+Chaque mois, l'agent saisit **manuellement** la commission reçue de l'opérateur
+en joignant une preuve (photo du SMS ou capture). Aucun calcul automatique
+n'est appliqué : la valeur saisie est la valeur officielle. Modèle :
 [commission.dart](../../lib/features/orange_money/domain/entities/commission.dart).
 
-**Vue Agent (04.1)** :
-- Estimation système basée sur les tranches (`0–5 000`, `5 001–25 000`, …)
-- Formulaire de déclaration mensuelle :
-  - Saisie du montant SMS opérateur
-  - Upload de la capture SMS comme preuve
-- Statut : `À déclarer` → `Déclarée` → `Payée`
+**KPIs en haut d'écran** :
 
-**Vue Dealer (04.2)** :
-- Vue comparative du réseau
-- Pour chaque agent : montant estimé vs déclaré → **écart** classifié
-  - `Conforme` : écart < 1 %
-  - `Écart Mineur` : 1 % à 5 %
-  - `Écart Significatif` : > 5 %
-- Validation et suivi des paiements de commission
+- **Ce mois-ci** — montant déclaré pour le mois courant
+- **À encaisser** — total déclaré non encore payé
+- **Encaissé (12 mois)** — total payé sur les 12 derniers mois
+- **Cumul total** — total payé toutes périodes confondues
+
+**Saisie d'une commission** :
+
+- Bouton « + » dans le header → choix du mois + montant + photo de preuve + notes
+- Statut initial : `Déclarée`
+
+**Validation par le superviseur** :
+
+- Une commission `Déclarée` (ou `Contestée`) peut être marquée `Payée`
+- Suivi : liste filtrable, tri par statut (contestée → déclarée → payée)
 
 ### 8. Configuration
 
@@ -245,10 +247,10 @@ Profil utilisateur, sécurité (mot de passe) et déconnexion.
 
 #### Commissions
 
-| Déclaration de commission | Vue réseau Dealer |
+| Saisie de commission | Vue réseau Dealer |
 | --- | --- |
-| ![Déclaration](assets/screenshots/19-commissions-declaration.png) | ![Réseau](assets/screenshots/20-commissions-reseau.png) |
-| Saisie du montant SMS de l'opérateur avec capture. | Vue agrégée du réseau avec total déclaré / validé par mois. |
+| ![Saisie](assets/screenshots/19-commissions-declaration.png) | ![Réseau](assets/screenshots/20-commissions-reseau.png) |
+| Formulaire mensuel : choix du mois, montant reçu, photo de preuve, notes. | Vue agrégée du réseau : commissions déclarées et payées par agent. |
 
 ---
 
@@ -309,7 +311,7 @@ Mêmes écrans, mêmes composants — seul le contexte d'entreprise change.
 | Commission Mensuelle |
 | --- |
 | ![Commission](assets/screenshots/agent-12-commission-mensuelle.png) |
-| Estimation système basée sur les transactions du mois + bouton `Envoyer ma déclaration` pour saisir le montant SMS opérateur et joindre la capture d'écran (modèle hybride). |
+| Saisie mensuelle manuelle : bouton « + » pour enregistrer le montant reçu de l'opérateur en joignant une photo du SMS comme preuve. |
 
 > Les écrans **Trésorerie** côté Agent réutilisent
 > [treasury_tab.dart](../../lib/features/orange_money/presentation/screens/sections/treasury_tab.dart)
@@ -392,21 +394,22 @@ class LiquidityCheckpoint {
 }
 ```
 
-### Commission (modèle hybride)
+### Commission (saisie manuelle mensuelle)
+
 ```dart
 class Commission {
-  final String period;                // "YYYY-MM"
-  // Estimation système
-  final int estimatedAmount;
-  final int transactionsCount;
-  final CommissionCalculationDetails? calculationDetails;
-  // Déclaration agent (SMS opérateur)
-  final int? declaredAmount;
-  final String? smsProofUrl;
-  // Rapprochement
-  final int? discrepancy;
-  final DiscrepancyStatus? discrepancyStatus; // conforme | mineur | significatif
-  final CommissionStatus status;              // estimated | declared | paid
+  final String id;
+  final String period;            // "YYYY-MM"
+  final String enterpriseId;
+  final int declaredAmount;       // montant saisi par l'agent (FCFA)
+  final CommissionStatus status;  // declared | paid | disputed
+  final String? smsProofUrl;      // photo du SMS / reçu (Firebase Storage)
+  final DateTime? declaredAt;
+  final String? declaredBy;
+  final DateTime? paidAt;
+  final String? paymentProofUrl;
+  final String? notes;
+  // + soft delete (deletedAt, deletedBy) et timestamps (createdAt, updatedAt)
 }
 ```
 
@@ -445,17 +448,14 @@ graph TD
 
 ```mermaid
 graph TD
-    A[Mois en cours] --> B[Estimation système permanente]
-    B --> C[Fin du mois]
-    C --> D[Agent reçoit SMS opérateur]
-    D --> E[Saisie montant + upload capture]
-    E --> F[Calcul écart estimé/déclaré]
-    F --> G{Statut écart}
-    G -->|Conforme| H[Validation Dealer]
-    G -->|Mineur| H
-    G -->|Significatif| I[Investigation]
-    I --> H
-    H --> J[Marquage payée]
+    A[Fin de mois] --> B[Agent reçoit SMS opérateur]
+    B --> C[Saisie manuelle: mois + montant + preuve]
+    C --> D[Statut: Déclarée]
+    D --> E{Paiement reçu ?}
+    E -->|Oui| F[Statut: Payée]
+    E -->|Conteste| G[Statut: Contestée]
+    G --> H[Résolution / nouvelle saisie]
+    H --> F
 ```
 
 ---
@@ -473,4 +473,4 @@ graph TD
 
 > **État de la Documentation** : ✅ Aligné sur l'implémentation (avril 2026)  
 > **Rôle illustré dans les screenshots** : Dealer  
-> **Dernière Mise à Jour** : 9 Avril 2026
+> **Dernière Mise à Jour** : 27 Avril 2026

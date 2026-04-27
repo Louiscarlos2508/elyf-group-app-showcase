@@ -109,7 +109,7 @@ Deux rôles distincts :
 Fonctionnalités :
 - 💵 Transactions cash-in / cash-out / dépôt / retrait
 - 🏧 **Déclaration matinale** + **bilan quotidien**
-- 📊 Calcul automatique des commissions (par contrat)
+- 📊 Saisie manuelle mensuelle des commissions (avec preuve photo)
 - 💰 Suivi de liquidité (checkpoints horodatés)
 - 📈 Trésorerie consolidée par dealer / agent
 
