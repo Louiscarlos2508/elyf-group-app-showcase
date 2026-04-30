@@ -210,6 +210,24 @@ features/<module>/
 
 ---
 
+## Tests
+
+52 fichiers de tests couvrant les couches critiques de l'application :
+
+| Catégorie | Fichiers | Périmètre |
+| --- | --- | --- |
+| **Domain services** | 17 | Calculs métier (production, ventes, crédits, rapports, validation) — Eau Minérale, Gaz, Boutique, Immobilier, Orange Money |
+| **Controllers** | 12 | Logique applicative Riverpod — Gaz (5), Immobilier (5), Administration (2) |
+| **Repositories** | 4 | Couche Drift (SQLite) — Boutique, Eau Minérale, Gaz, Orange Money |
+| **Core offline** | 3 | Sync Firestore → Drift, résolution de conflits |
+| **Intégration** | 2 | Multi-tenant, offline sync end-to-end |
+| **Widgets** | 8 | Composants partagés (navigation, layout, états vides, erreurs) |
+
+Les services de calcul (règles de gestion pures, sans dépendances externes)
+sont prioritairement couverts car ils concentrent la complexité métier.
+
+---
+
 ## Sécurité & conformité
 
 - Auth Firebase avec tokens sécurisés et règles Firestore par tenant
