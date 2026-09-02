@@ -1,27 +1,171 @@
-# Portfolio — ELYF Group App
+<div align="center">
 
-Application Flutter multi-entreprises (ERP multi-tenant) pour piloter
-plusieurs activités commerciales depuis une seule app — offline-first,
-role-aware, intégration matérielle native (imprimantes thermiques Sunmi).
+# 🏭 ELYF Group App
 
-> Conçue et développée par **Carlos Simporé** — Founder, [Scalario Labs](https://scalario.com).
-> ELYF Group est l'entreprise cliente exploitant l'application.
+### Un ERP multi-entreprises **Flutter + Firebase**, offline-first, pour piloter 6 activités commerciales réelles depuis une seule application.
 
-| | |
-| --- | --- |
-| 📲 **Télécharger l'APK** | [elyf-app-portal--elyf-group-app.us-east4.hosted.app](https://elyf-app-portal--elyf-group-app.us-east4.hosted.app/) |
-| 🌐 **Console admin (web)** | [elyf-group-app.web.app](https://elyf-group-app.web.app/) |
+**Conçue, architecturée et développée de A à Z par [Carlos Simporé](https://scalario.com) — Founder, Scalario Labs.**
+
+</div>
+
+<div align="center">
+
+![Flutter](https://img.shields.io/badge/Flutter-3.29+-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-3.7+-0175C2?style=for-the-badge&logo=dart&logoColor=white)
+![Riverpod](https://img.shields.io/badge/Riverpod-3-white?style=for-the-badge&logo=riverpod&logoColor=black)
+![Drift/SQLite](https://img.shields.io/badge/Drift%20SQLite-offline--first-4479A1?style=for-the-badge&logo=sqlite&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-backend-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Clean Architecture](https://img.shields.io/badge/Architecture-Clean%20%2F%20Feature--First-6DB33F?style=for-the-badge)
+![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+
+**Télécharger l'app** · [📲 APK (Firebase Storage)](https://elyf-app-portal--elyf-group-app.us-east4.hosted.app/) &nbsp;·&nbsp; **Console admin** · [🌐 Web app](https://elyf-group-app.web.app/)
+
+</div>
 
 ---
 
-## Vue d'ensemble
+## 💡 Le projet en une phrase
 
-ELYF Group App regroupe 6 modules métier indépendants partageant une
-même base technique (auth, multi-tenant, sync offline, trésorerie, audit
-trail, permissions, notifications). Chaque module est conçu pour un métier
-réel exercé sur le terrain au Burkina Faso.
+> Un seul code Flutter, **6 ERP métier**, **7 rôles**, **120+ écrans**, fonctionnant **hors-ligne** sur des tablettes Android (Sunmi), synchronisés en arrière-plan avec Firebase — utilisé **en production quotidienne** par ELYF Group au Burkina Faso.
 
-### Stack technique
+Chaque module modélise un **métier réel exercé sur le terrain** : production d'eau, distribution de gaz en bouteilles, opérations Orange Money, commerce de détail, gestion locative, et un back-office de pilotage transverse du groupe.
+
+---
+
+## 🎯 Pourquoi ce projet est différent
+
+Ce n'est pas une démo. C'est un **produit en production**, avec de vraies contraintes terrain résolues proprement :
+
+| Défi réel | Solution technique |
+| --- | --- |
+| 📶 **Réseau instable sur le terrain** | Architecture **offline-first** : Drift (SQLite) en local, toutes les opérations passent par la base locale, sync Firestore automatique en arrière-plan. |
+| 🏢 **Plusieurs activités, un seul groupe** | **Multi-tenant** : switch d'entreprise sans reconnexion, isolation stricte par `enterpriseId`. |
+| 👥 **Rôles très différents** | **Permissions granulaires** et **dashboards rôle-conscients** : Manager, POS, Agent, Dealer… chacun voit le sien. |
+| 🖨️ **Impression de tickets sur le terrain** | **Intégration matérielle native** des imprimantes thermiques **Sunmi V3 Mix**. |
+| 🧾 **Fraude / audit** | **Chaînage cryptographique des tickets de caisse** (`ticketHash` / `previousHash`) + audit trail des actions critiques. |
+| 📱 **Mises à jour immédiates** | **Hotfix OTA** via Shorebird, **CI/CD** GitHub Actions, **APK signé** distribué par Firebase Storage. |
+
+---
+
+## 🏗️ Les modules
+
+| Module | Activité | Screenshots | Statut |
+| --- | --- | --- | --- |
+| 💧 [**Eau Minérale**](./eau_minerale/) | Usine de production & distribution d'eau | 31 | ✅ Production |
+| 🏪 [**Gaz**](./gaz/) | Distribution de bouteilles de gaz (gros & détail) | 38 | ✅ Production |
+| 📱 [**Orange Money**](./orange_money/) | Dealer & agents Mobile Money | 32 | ✅ Production |
+| 🛒 [**Boutique**](./boutique/) | Point de vente commerce de détail | 10 | ✅ Production |
+| 🏠 [**Immobilier**](./immobilier/) | Gestion locative de propriétés | 13 | ✅ Production |
+| 🧭 [**Administration**](./admin/) | Console de pilotage 360° du groupe | 3 | ✅ Production |
+
+---
+
+### 💧 Eau Minérale — Usine de production & distribution
+
+> Cycle complet : approvisionnement matières → sessions de production multi-jours → stock → ventes → trésorerie → salaires.
+
+- 🏭 **Sessions de production multi-jours** (machines, bobines, matières, personnel)
+- 📦 Stock **bi-niveau** (matières premières + produits finis) avec alertes de seuil
+- 🛒 Achats fournisseurs (comptant ou crédit, support lots)
+- 💰 Ventes cash / **mobile money** / mixte / **crédit client**
+- 👷 **Salaires** (employés fixes + ouvriers payés à la production)
+- 📊 **Rapports PDF** (KPIs, tendances, ventilations)
+- ⚙️ Parc machines + maintenance
+
+**31 screenshots** · [📖 Documentation complète →](./eau_minerale/)
+
+---
+
+### 🏪 Gaz — Distribution de bouteilles (gros & détail)
+
+> Des **tournées multi-étapes** sur le terrain à la gestion d'un réseau de points de vente affiliés.
+
+- 🚚 **Tournées** : Collecte vides → Recharge fournisseur → Livraison → Encaissement → Bilan → Clôture
+- 🏪 Réseau de **POS affiliés** (succursales ou comptoirs simples)
+- 🧑‍💼 Annuaire **grossistes B2B**
+- 🛢️ Stock **bi-modal** (pleines / vides) par poids (3–12 kg)
+- 💰 **Versements POS → maison mère** avec validation manager
+- 🧾 Reçus **PDF** et partage natif (Drive, Bluetooth, Gmail…)
+- ⚙️ Parc de bouteilles + tarification consigne
+
+**Vues Manager + POS** · [📖 Documentation complète →](./gaz/)
+
+---
+
+### 📱 Orange Money — Dealer & agents Mobile Money
+
+> Deux rôles dans un seul module : le **Dealer** pilote son réseau, l'**Agent** exécute les transactions client.
+
+- 💵 Transactions cash-in / cash-out / dépôt / retrait (assistant 3 & 4 étapes)
+- 🏧 **Déclaration matinale** + **bilan quotidien** avec réconciliation théorique vs réel
+- 📊 Saisie mensuelle manuelle des **commissions** (avec preuve photo)
+- 💰 Suivi de **liquidité** (checkpoints horodatés, auto-clôture)
+- 📈 **Trésorerie consolidée** par dealer / agent, recharges, apports
+
+**Vues Dealer + Agent** · [📖 Documentation complète →](./orange_money/)
+
+---
+
+### 🛒 Boutique — Point de vente commerce de détail
+
+> Une caisse moderne pour le commerce de détail — du scan code-barres à l'audit anti-fraude.
+
+- 🛒 **Caisse temps réel** : scan code-barres + panier persistant
+- 📦 Catalogue produits (catégories, photos, historique des prix, soft delete)
+- 📥 Inventaire & mouvements de stock (réception, ajustement)
+- 🧾 **Chaînage cryptographique des tickets** pour audit
+- 💳 Créances clients (ventes à crédit, encaissements partiels)
+- 💵 Trésorerie multi-comptes + dépenses
+- 🖨️ Impression Sunmi native
+
+[📖 Documentation complète →](./boutique/)
+
+---
+
+### 🏠 Immobilier — Gestion locative
+
+> Gestion d'un portefeuille de propriétés en location, de l'encaissement des loyers aux rapports de rentabilité.
+
+- 🏠 Catalogue de propriétés (statut d'occupation, loyer mensuel)
+- 👥 Annuaire locataires (**à jour / en retard**)
+- 💰 **Encaissement de loyers** — assistant 2 étapes (Locataire → Maison → Mois à payer)
+- ⚠️ Suivi des loyers en retard + **facturation automatique** des échéances
+- 🧾 Génération automatique de **quittances PDF**
+- 💵 Trésorerie consolidée (caisse + banque)
+- 📊 Rapports analytiques (revenus, dépenses, bénéfice net, taux d'occupation)
+
+**13 screenshots** · [📖 Documentation complète →](./immobilier/)
+
+---
+
+### 🧭 Administration — Console 360° du groupe
+
+> Vue transverse sur **toutes** les entreprises et **tous** les modules, depuis un seul écran réservé aux admins.
+
+- 📈 **Dashboard groupe** — KPIs consolidés (CA, Dépenses, Bénéfice net, Marge) + graphique d'évolution journalière
+- 🏢 **Organisation** — toutes les entreprises, fiche live par entreprise avec onglets adaptés au métier (**pattern Strategy**)
+- 🚚 **Vue Gaz** — historique des tours + fiche tour live (Bilan · Recharge · POS · Grossistes · Timeline)
+- 📦 **Vue Eau Minérale** — stock + appros admin directes avec notification automatique
+- 🛒 **Vue Boutique** — performance, stock, trésorerie par point de vente
+- 👥 **Accès** — gestion des utilisateurs et rôles par module
+- 🔍 **Audit trail** complet + ⚡ lecture **Firestore live** (données toujours fraîches)
+
+**3 screenshots** · [📖 Documentation complète →](./admin/)
+
+---
+
+## 🖼️ Écrans transverses
+
+Trois écrans communs à toute l'application — le point d'entrée, le switch multi-tenant, et le splash de chargement.
+
+| Login | Switch d'espace | Chargement module |
+| --- | --- | --- |
+| ![Login](docs/assets/01-login.png) | ![Switch](docs/assets/02-workspace-switcher.png) | ![Loading](docs/assets/03-module-loading.png) |
+| Écran « Bienvenue sur Elyf » — auth Firebase email/mot de passe. | Popup « Changer d'espace » — bascule rapide entre Orange Money Principal, Elyf Gaz, Elyf Immobilier… | Splash module-aware — initialisation Drift, sync, permissions. |
+
+---
+
+## ⚙️ Stack technique
 
 | Couche | Technologies |
 | --- | --- |
@@ -48,131 +192,7 @@ réel exercé sur le terrain au Burkina Faso.
 
 ---
 
-## Écrans transverses
-
-Trois écrans communs à toute l'application — point d'entrée, switch
-multi-tenant, splash de chargement de module.
-
-| Login | Switch d'espace | Chargement module |
-| --- | --- | --- |
-| ![Login](docs/assets/01-login.png) | ![Switch](docs/assets/02-workspace-switcher.png) | ![Loading](docs/assets/03-module-loading.png) |
-| Écran d'accueil « Bienvenue sur Elyf » — auth Firebase email/mot de passe. | Popup Changer d'espace — passage rapide entre Orange Money Principal, Elyf Gaz, Elyf Immobilier… | Splash module-aware (ici Gaz) — initialisation Drift, sync, permissions. |
-
----
-
-## Modules d'entreprise
-
-Tous les modules ci-dessous sont alignés sur l'implémentation réelle
-(avril 2026), avec des screenshots capturés sur tablette en conditions
-réelles d'exploitation.
-
-### [Eau Minérale](./eau_minerale/) ✅
-
-Usine de production et distribution d'eau en sachets/packs.
-
-- 🏭 Sessions de production multi-jours (machines, bobines, matières, personnel)
-- 📦 Stock bi-niveau (matières premières + produits finis)
-- 🛒 Achats fournisseurs (comptant ou crédit, support lots)
-- 💰 Ventes (cash / mobile money / mixte / crédit client)
-- 💳 Crédits clients + encaissements
-- 💵 Trésorerie multi-comptes
-- 💸 Dépenses & rapports mensuels
-- 👷 Salaires (employés fixes + ouvriers payés à la production)
-- 📊 Rapports PDF (KPIs, tendances, ventilations)
-- ⚙️ Parc machines + maintenance
-
-**31 screenshots** · [📖 Documentation →](./eau_minerale/)
-
----
-
-### [Gaz](./gaz/) ✅
-
-Distribution de bouteilles de gaz — gros & détail.
-
-- 🚚 **Tournées multi-étapes** : Collecte vides → Recharge fournisseur → Livraison → Encaissement → Bilan → Clôture
-- 🏪 Réseau de **POS affiliés** (succursales ou comptoirs simples)
-- 🧑‍💼 Annuaire **grossistes B2B**
-- 🛢️ Stock bi-modal (pleines / vides) par poids (3 kg, 6 kg, 10 kg, 12 kg)
-- 💰 Versements POS → maison mère
-- 🧾 Reçus PDF et partage natif (Drive, Bluetooth, Gmail…)
-- ⚙️ Parc de bouteilles enregistré + tarification consigne
-
-**Vues Manager + POS** · [📖 Documentation →](./gaz/)
-
----
-
-### [Orange Money](./orange_money/) ✅
-
-Opérations cash-in / cash-out pour agents Orange Money agréés.
-
-Deux rôles distincts :
-
-- **Dealer** — pilote le réseau d'agents, supervise les liquidités, distribue les commissions
-- **Agent** — exécute les transactions client (4 étapes), gère sa caisse quotidienne
-
-Fonctionnalités :
-
-- 💵 Transactions cash-in / cash-out / dépôt / retrait
-- 🏧 **Déclaration matinale** + **bilan quotidien**
-- 📊 Saisie manuelle mensuelle des commissions (avec preuve photo)
-- 💰 Suivi de liquidité (checkpoints horodatés)
-- 📈 Trésorerie consolidée par dealer / agent
-
-[📖 Documentation →](./orange_money/)
-
----
-
-### [Boutique](./boutique/) ✅
-
-Point de vente (POS) commerce de détail.
-
-- 🛒 Caisse temps réel avec scan code-barres + panier persistant
-- 📦 Catalogue produits (catégories, photos, historique des prix, soft delete)
-- 📥 Inventaire & mouvements de stock (réception, ajustement)
-- 💵 Trésorerie multi-comptes (Caisse + Mobile Money)
-- 🧾 **Chaînage cryptographique des tickets** (`ticketHash` / `previousHash`) pour audit
-- 💳 Créances clients (ventes à crédit, encaissements partiels)
-- 💸 Dépenses opérationnelles avec impact direct trésorerie
-- 🖨️ Impression Sunmi native
-
-[📖 Documentation →](./boutique/)
-
----
-
-### [Immobilier](./immobilier/) ✅
-
-Gestion d'un portefeuille de propriétés en location.
-
-- 🏠 Catalogue de propriétés (statut occupation, loyer mensuel)
-- 👥 Annuaire locataires (à jour / en retard)
-- 💰 Encaissement de loyers — assistant 2 étapes (Locataire → Maison → Mois à payer)
-- ⚠️ Suivi des loyers en retard avec relance
-- 💸 Dépenses rattachées à une propriété
-- 💵 Trésorerie consolidée (caisse + banque)
-- 📊 Rapports analytiques (revenus, dépenses, bénéfice net, taux d'occupation)
-
-[📖 Documentation →](./immobilier/)
-
----
-
-### [Administration](./admin/) ✅
-
-Console de pilotage 360° du groupe — vue transverse sur toutes les entreprises.
-
-- 📈 **Dashboard groupe** — KPIs consolidés (CA, Dépenses, Bénéfice net, Marge) avec graphique d'évolution journalière, filtres période
-- 🏢 **Organisation** — liste de toutes les entreprises, fiche live par entreprise avec onglets adaptés au métier (pattern Strategy)
-- 🚚 **Vue Gaz** — historique tours (en cours en tête), fiche tour live avec Bilan · Recharge · POS · Grossistes · Timeline
-- 📦 **Vue Eau Minérale** — stock, appros admin directes avec support lots et notification automatique au user
-- 🛒 **Vue Boutique** — performance, stock, trésorerie par point de vente
-- 👥 **Accès** — gestion utilisateurs et rôles par module
-- 🔍 **Audit trail** — toutes les actions critiques tracées
-- ⚡ Lecture Firestore live (pas de Drift côté admin — données toujours fraîches)
-
-**3 screenshots** · [📖 Documentation →](./admin/)
-
----
-
-## Architecture globale
+## 🏗️ Architecture globale
 
 ### Clean Architecture & Feature-First
 
@@ -198,7 +218,7 @@ lib/
 
 ### Structure d'un module
 
-Chaque feature suit la même structure en couches :
+Chaque feature suit la même organisation en couches :
 
 ```text
 features/<module>/
@@ -208,38 +228,37 @@ features/<module>/
 └── data/            # Repositories (Firestore + Drift), datasources
 ```
 
+> 💡 **Lecture du flux** : UI → Provider → Controller → Service métier (validation / calcul) → Repository offline (Drift) → SyncManager → Firestore. Aucun appel réseau bloquant en lecture.
+
 ---
 
-## Tests
+## 🧪 Tests
 
-52 fichiers de tests couvrant les couches critiques de l'application :
+**52 fichiers de tests** couvrant les couches critiques — les règles métier (services de calcul purs) sont prioritairement couvertes car elles concentrent la complexité.
 
 | Catégorie | Fichiers | Périmètre |
 | --- | --- | --- |
-| **Domain services** | 17 | Calculs métier (production, ventes, crédits, rapports, validation) — Eau Minérale, Gaz, Boutique, Immobilier, Orange Money |
-| **Controllers** | 12 | Logique applicative Riverpod — Gaz (5), Immobilier (5), Administration (2) |
+| **Domain services** | 17 | Calculs métier (production, ventes, crédits, rapports, validation) |
+| **Controllers** | 12 | Logique applicative Riverpod — Gaz, Immobilier, Administration |
 | **Repositories** | 4 | Couche Drift (SQLite) — Boutique, Eau Minérale, Gaz, Orange Money |
 | **Core offline** | 3 | Sync Firestore → Drift, résolution de conflits |
 | **Intégration** | 2 | Multi-tenant, offline sync end-to-end |
 | **Widgets** | 8 | Composants partagés (navigation, layout, états vides, erreurs) |
 
-Les services de calcul (règles de gestion pures, sans dépendances externes)
-sont prioritairement couverts car ils concentrent la complexité métier.
-
 ---
 
-## Sécurité & conformité
+## 🔒 Sécurité & conformité
 
 - Auth Firebase avec tokens sécurisés et règles Firestore par tenant
 - Validation côté serveur (Cloud Functions)
-- Chaînage cryptographique des tickets de caisse (Boutique)
-- Audit trail des actions critiques
+- **Chaînage cryptographique** des tickets de caisse (Boutique)
+- **Audit trail** des actions critiques
 - Permissions granulaires par module et par rôle
 - Soft delete avec `deletedAt` / `deletedBy`
 
 ---
 
-## Métriques
+## 📊 Métriques
 
 | Métrique | Valeur |
 | --- | --- |
@@ -255,16 +274,15 @@ sont prioritairement couverts car ils concentrent la complexité métier.
 
 ---
 
-## Auteur
+## 👤 Auteur
 
 **Carlos Simporé** — Founder, Scalario Labs
 
-Architecte, développeur et designer unique de l'application ELYF Group App.
-Conception produit, modélisation métier, implémentation Flutter/Firebase,
-intégration matérielle (Sunmi), CI/CD et déploiement — réalisés en solo.
+Architecte, développeur et designer unique de l'application ELYF Group App :
+**conception produit**, modélisation métier, implémentation **Flutter/Firebase**,
+intégration **matérielle (Sunmi)**, **CI/CD** et **déploiement** — le tout réalisé en solo.
 
-> ELYF Group est l'entreprise cliente exploitant l'application sur le
-> terrain au Burkina Faso.
+> **ELYF Group** est l'entreprise cliente exploitant l'application sur le terrain au Burkina Faso.
 
 ### Licence
 
@@ -272,4 +290,4 @@ Propriétaire — Scalario Labs © 2026 · Exploité sous licence par ELYF Group
 
 ---
 
-> État : ✅ Tous les modules alignés sur l'implémentation — Avril 2026 · v0.1.24
+> **État** : ✅ Tous les modules alignés sur l'implémentation — Avril 2026 · v0.1.24

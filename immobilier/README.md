@@ -1,176 +1,125 @@
-# Module Immobilier - ELYF Group App
+# Module Immobilier — ELYF Group App
 
 ## 🎯 Vue d'Ensemble
 
-Le module **Immobilier** permet la gestion complète d'un portefeuille de propriétés en location. Il gère les propriétés, les locataires, les contrats de location, les paiements de loyers et la maintenance des biens.
+Le module **Immobilier** gère un **portefeuille de propriétés en location** :
+catalogue des biens, annuaire des locataires, contrats de bail, encaissement
+des loyers (avec facturation automatique des échéances et **génération de
+quittances PDF**), suivi des loyers en retard, dépenses par bien et rapports
+analytiques de rentabilité.
+
+L'architecture est **offline-first** : toutes les opérations passent par une
+base locale (Drift) et se synchronisent avec le backend. Le module est aligné
+sur l'implémentation réelle (avril 2026) — module **production-ready** avec
+8 repositories et 7 controllers dédiés.
 
 ### Caractéristiques Principales
 
-- 🏠 **Gestion des Propriétés** - Catalogue complet des biens immobiliers
-- 👥 **Gestion des Locataires** - Dossiers locataires et historique
-- 📄 **Contrats de Location** - Création et suivi des baux
-- 💰 **Paiements de Loyers** - Encaissement et suivi des paiements
-- 🔧 **Maintenance** - Gestion des demandes et interventions
-- 📊 **Rapports Financiers** - Suivi de la rentabilité
+- 🏠 **Gestion des propriétés** — catalogue des biens, statut d'occupation, loyer mensuel
+- 👥 **Annuaire des locataires** — dossiers, statut « à jour / en retard »
+- 📄 **Contrats de bail** — rattachement locataire ↔ propriété, dates, loyer, caution
+- 💰 **Encaissement de loyers** — assistant 2 étapes (Locataire → Maison → Mois à payer)
+- ⚠️ **Suivi des impayés** — échéances en retard + relance
+- 🧾 **Quittances PDF** — génération automatique + partage natif Android
+- 🤖 **Facturation automatique** — échéances mensuelles générées le 1er du mois
+- 💵 **Trésorerie consolidée** — caisse + banque
+- 📊 **Rapports analytiques** — revenus, dépenses, bénéfice net, taux d'occupation
+
+Code source : [lib/features/immobilier/](../../lib/features/immobilier/)
 
 ---
 
-## ✨ Fonctionnalités Prévues
+## 🧩 Architecture Fonctionnelle
 
-### 1. Gestion des Propriétés
+Navigation latérale en plusieurs sections (visibilité conditionnée par les
+permissions [immobilier_permissions.dart](../../lib/core/permissions/modules/immobilier_permissions.dart)) :
 
-#### Catalogue de Biens
-- Ajout de propriétés (maisons, appartements, etc.)
-- Photos et descriptions détaillées
-- Caractéristiques (surface, nombre de pièces, etc.)
-- Localisation et adresse
-
-#### Statut des Propriétés
-- Disponible
-- Occupée
-- En maintenance
-- Hors service
-
-#### Valorisation
-- Prix de location
-- Charges locatives
-- Historique des prix
-- Estimation de la valeur
-
-### 2. Gestion des Locataires
-
-#### Dossiers Locataires
-- Informations personnelles
-- Pièces d'identité
-- Coordonnées
-- Historique de location
-
-#### Sélection
-- Demandes de location
-- Vérification des dossiers
-- Validation et acceptation
-
-### 3. Contrats de Location
-
-#### Création de Baux
-- Génération automatique de contrats
-- Durée de location
-- Montant du loyer
-- Conditions particulières
-
-#### Gestion des Contrats
-- Renouvellement
-- Résiliation
-- Avenants
-- Archivage
-
-### 4. Paiements de Loyers
-
-#### Encaissement
-- Enregistrement des paiements
-- Paiements en espèces
-- Paiements mobiles
-- Virements bancaires
-
-#### Suivi
-- Loyers en retard
-- Relances automatiques
-- Historique des paiements
-- Quittances de loyer
-
-#### Charges
-- Eau, électricité
-- Entretien commun
-- Taxes
-- Répartition des charges
-
-### 5. Maintenance
-
-#### Demandes d'Intervention
-- Signalement par les locataires
-- Catégorisation (urgence, normale)
-- Assignation aux techniciens
-
-#### Suivi des Interventions
-- Planification
-- Statut (en attente, en cours, terminée)
-- Coûts
-- Historique
-
-### 6. Rapports & Analytics
-
-#### Financiers
-- Revenus locatifs mensuels
-- Taux d'occupation
-- Loyers impayés
-- Rentabilité par propriété
-
-#### Opérationnels
-- Taux de rotation des locataires
-- Durée moyenne de location
-- Nombre d'interventions
-- Coûts de maintenance
+| Section | Écrans |
+| --- | --- |
+| **Vue d'ensemble** | Tableau de Bord |
+| **Finances** | Paiements · Retards · Dépenses · Trésorerie |
+| **Gestion** | Locataires · Propriétés |
+| **Rapports** | Rapports analytiques |
+| **Configuration** | Profil & sécurité |
 
 ---
 
-## 🔄 Flux de Travail Théorique
+## ✨ Fonctionnalités Implémentées
 
-### Flux de Location
+### 1. Tableau de Bord
 
-```mermaid
-graph TD
-    A[Propriété Disponible] --> B[Demande de Location]
-    B --> C[Vérifier Dossier]
-    C --> D{Dossier Valide?}
-    D -->|Non| E[Refuser]
-    D -->|Oui| F[Créer Contrat]
-    F --> G[Signer Contrat]
-    G --> H[Encaisser Caution]
-    H --> I[Remettre Clés]
-    I --> J[Propriété Occupée]
-```
+[dashboard_screen.dart](../../lib/features/immobilier/presentation/screens/sections/dashboard_screen.dart)
 
-### Flux de Paiement de Loyer
+- Synthèse des **revenus**, **paiements reçus** et **tendance mensuelle**
+- Agrégats calculés par `DashboardCalculationService` / `PropertyCalculationService`
+  (revenus par propriété, taux d'occupation, rentabilité)
 
-```mermaid
-graph TD
-    A[Début du Mois] --> B[Générer Facture]
-    B --> C{Paiement Reçu?}
-    C -->|Oui| D[Enregistrer Paiement]
-    C -->|Non| E[Attendre]
-    E --> F{Date Dépassée?}
-    F -->|Non| C
-    F -->|Oui| G[Envoyer Relance]
-    G --> H{Paiement Reçu?}
-    H -->|Oui| D
-    H -->|Non| I[Procédure Impayé]
-    D --> J[Générer Quittance]
-```
+### 2. Encaissement de Loyers — Assistant 2 étapes
 
-### Flux de Maintenance
+[payments_screen.dart](../../lib/features/immobilier/presentation/screens/sections/payments_screen.dart)
 
-```mermaid
-graph TD
-    A[Demande Intervention] --> B{Urgence?}
-    B -->|Oui| C[Intervention Immédiate]
-    B -->|Non| D[Planifier Intervention]
-    C --> E[Assigner Technicien]
-    D --> E
-    E --> F[Effectuer Intervention]
-    F --> G[Valider Travaux]
-    G --> H[Enregistrer Coûts]
-    H --> I{Facturer Locataire?}
-    I -->|Oui| J[Créer Facture]
-    I -->|Non| K[Charge Propriétaire]
-```
+Flux guidé en 2 étapes :
+
+1. **Locataire** — sélection du locataire à encaisser (recherche + filtre « à jour / en retard »)
+2. **Maison** — sélection de la propriété rattachée au locataire
+3. **Mois à payer** — l'utilisateur coche les échéances impayées ; `PaymentController`
+   calcule le total dû, applique le paiement et marque les mois comme soldés
+4. Génération automatique de la **quittance PDF** via `ReceiptService`
+
+> Toute écriture **doit** passer par `PaymentController.recordRentPayment()` pour
+> garantir la cohérence échéances ↔ paiements ↔ quittance.
+
+### 3. Suivi des Impayés
+
+[payments_screen.dart](../../lib/features/immobilier/presentation/screens/sections/payments_screen.dart)
+
+- **Loyers en retard** — suivi des locataires en souffrance avec actions de relance rapide
+- **Facturation automatique** : `BillingAutomationService` génère les échéances
+  mensuelles sur tous les contrats actifs (le 1er du mois) et met à jour le statut
+  « en retard » dès qu'une échéance dépasse la date butoir
+
+### 4. Dépenses par Propriété
+
+[expenses_screen.dart](../../lib/features/immobilier/presentation/screens/sections/expenses_screen.dart)
+
+- Vue filtrable des charges sur la période
+- Saisie d'une **dépense rattachée à une propriété**
+- Impact direct sur la rentabilité calculée dans les rapports
+
+### 5. Trésorerie
+
+[treasury_screen.dart](../../lib/features/immobilier/presentation/screens/sections/treasury_screen.dart)
+
+- Historique des mouvements **Caisse / Banque** avec **soldes consolidés**
+- Géré par `immobilier_treasury_controller`
+
+### 6. Gestion Locataires & Propriétés
+
+[tenants_screen.dart](../../lib/features/immobilier/presentation/screens/sections/tenants_screen.dart)
+· [properties_screen.dart](../../lib/features/immobilier/presentation/screens/sections/properties_screen.dart)
+
+- **Locataires** : annuaire avec filtres « À jour / En retard », dossiers et documents
+- **Propriétés** : catalogue des biens avec **statut d'occupation** et **loyer mensuel**
+
+### 7. Rapports Analytiques
+
+[reports_screen.dart](../../lib/features/immobilier/presentation/screens/sections/reports_screen.dart)
+
+- Période personnalisable
+- KPIs financiers : **revenus**, **dépenses**, **bénéfice net**, **taux d'occupation**
+- Détail par paiement et calcul de rentabilité par propriété
+
+### 8. Configuration
+
+[immobilier_shell_screen.dart](../../lib/features/immobilier/presentation/screens/immobilier_shell_screen.dart)
+
+Profil utilisateur, sécurité (mot de passe) et déconnexion.
 
 ---
 
 ## 📸 Screenshots
 
-Captures réalisées sur tablette (mode sombre, locale FR). Les écrans illustrent
-les principaux parcours du module : vue d'ensemble, finances, gestion immobilière,
-rapports et configuration.
+> Captures réalisées sur tablette en mode sombre, locale FR.
 
 ### 1. Vue d'Ensemble
 
@@ -191,24 +140,24 @@ rapports et configuration.
 | ![Dépenses](assets/screenshots/04-depenses-liste.png) | ![Formulaire dépense](assets/screenshots/05-depense-formulaire.png) |
 | Vue filtrable des charges sur la période. | Saisie d'une dépense rattachée à une propriété. |
 
-#### Parcours d'encaissement (assistant en 2 étapes)
+#### Parcours d'encaissement (assistant 2 étapes)
 
 | Étape 1 — Locataire | Étape 2 — Maison | Sélection des mois |
 | --- | --- | --- |
 | ![Étape 1](assets/screenshots/06-encaissement-step1-locataire.png) | ![Étape 2](assets/screenshots/07-encaissement-step2-maison.png) | ![Mois](assets/screenshots/08-encaissement-mois-a-payer.png) |
-| Choix du locataire à encaisser. | Choix de la maison rattachée au locataire. | Sélection des mois impayés et du montant. |
+| Choix du locataire à encaisser. | Choix de la maison rattachée au locataire. | Sélection des mois impayés et du total dû. |
 
 | Trésorerie |
 | --- |
 | ![Trésorerie](assets/screenshots/09-tresorerie.png) |
 | Historique des mouvements caisse / banque avec soldes consolidés. |
 
-### 3. Gestion Immobilière
+### 3. Gestion
 
 | Locataires | Propriétés |
 | --- | --- |
 | ![Locataires](assets/screenshots/10-locataires-liste.png) | ![Propriétés](assets/screenshots/11-proprietes-liste.png) |
-| Annuaire avec filtres "À jour / En retard". | Catalogue des biens avec statut d'occupation et loyer mensuel. |
+| Annuaire avec filtres « À jour / En retard ». | Catalogue des biens avec statut d'occupation et loyer mensuel. |
 
 ### 4. Rapports
 
@@ -226,26 +175,27 @@ rapports et configuration.
 
 ---
 
-## 🛠️ Détails Techniques
+## 🛠️ Modèle de Domaine
 
-### Modèles de Données Prévus
+Tous les modèles sont définis dans
+[lib/features/immobilier/domain/entities/](../../lib/features/immobilier/domain/entities/).
 
-#### Property
+### Property
 ```dart
 class Property {
   final String id;
   final String name;
   final String address;
-  final PropertyType type; // house, apartment, etc.
+  final PropertyType type;      // house, apartment, etc.
   final int rooms;
   final double surface;
   final double monthlyRent;
-  final PropertyStatus status;
+  final PropertyStatus status;  // occupation
   final List<String> imageUrls;
 }
 ```
 
-#### Tenant
+### Tenant
 ```dart
 class Tenant {
   final String id;
@@ -254,79 +204,59 @@ class Tenant {
   final String email;
   final String idNumber;
   final List<String> documentUrls;
-  final TenantStatus status;
+  final TenantStatus status;    // "à jour" / "en retard"
 }
 ```
 
-#### LeaseContract
+### Payment
 ```dart
-class LeaseContract {
-  final String id;
-  final String propertyId;
-  final String tenantId;
-  final DateTime startDate;
-  final DateTime endDate;
-  final double monthlyRent;
-  final double deposit;
-  final ContractStatus status;
-}
-```
-
-#### RentPayment
-```dart
-class RentPayment {
+class Payment {
   final String id;
   final String contractId;
-  final DateTime dueDate;
-  final DateTime? paidDate;
+  final List<DateTime> monthsCovered;  // mois couverts par le paiement
   final double amount;
-  final PaymentStatus status;
-  final PaymentMethod? method;
+  final PaymentMethod method;
+  final DateTime paidAt;
 }
 ```
 
-#### MaintenanceRequest
-```dart
-class MaintenanceRequest {
-  final String id;
-  final String propertyId;
-  final String tenantId;
-  final String description;
-  final RequestPriority priority;
-  final RequestStatus status;
-  final double? cost;
-  final DateTime createdAt;
-  final DateTime? completedAt;
-}
-```
+Autres entités notables :
+- `Contract` — bail (locataire ↔ propriété, dates, loyer, caution)
+- `Expense` / `PropertyExpense` — dépense rattachée à une propriété
+- `MaintenanceTicket` — demande/intervention de maintenance
+- `ImmobilierSettings` — configuration du module
+- `ReportPeriod` — période de rapport
 
 ---
 
-## 📊 Roadmap
+## 🔄 Flux Métier Clés
 
-### Phase 1 : Fonctionnalités de Base
-- [ ] Gestion du catalogue de propriétés
-- [ ] Gestion des locataires
-- [ ] Création de contrats de location
-- [ ] Dashboard basique
+### Cycle de Facturation & Encaissement
 
-### Phase 2 : Paiements
-- [ ] Enregistrement des paiements de loyers
-- [ ] Génération de quittances
-- [ ] Suivi des impayés
-- [ ] Relances automatiques
+```mermaid
+graph TD
+    A[Début du mois] --> B[BillingAutomationService<br/>génère échéances des contrats actifs]
+    B --> C{Échéance payée ?}
+    C -->|Oui| D[Encaissement 2 étapes<br/>Locataire → Maison]
+    D --> E[Sélection des mois impayés]
+    E --> F[PaymentController.recordRentPayment]
+    F --> G[Marquage solde + Quittance PDF]
+    C -->|Non| H[Statut « en retard »]
+    H --> I[Relance]
+    I --> C
+```
 
-### Phase 3 : Maintenance
-- [ ] Demandes d'intervention
-- [ ] Assignation aux techniciens
-- [ ] Suivi des interventions
-- [ ] Gestion des coûts
+### Cycle de Rentabilité
 
-### Phase 4 : Fonctionnalités Avancées
-- [ ] Génération automatique de contrats PDF
-- [ ] Notifications SMS/Email
-- [ ] Rapports financiers détaillés
-- [ ] Prédiction des revenus
+```mermaid
+graph LR
+    A[Revenus locatifs] --> C[PropertyCalculationService]
+    B[Dépenses par bien] --> C
+    C --> D[Revenus par propriété]
+    C --> E[Taux d'occupation]
+    C --> F[Rentabilité = revenus − dépenses]
+    C --> G[Bénéfice net par période]
+```
 
 ---
 
@@ -341,6 +271,6 @@ class MaintenanceRequest {
 
 ## 📝 Notes
 
-> **État de la Documentation** : 📸 Screenshots intégrés  
-> **Dernière Mise à Jour** : 9 Avril 2026  
-> **Version du Module** : En développement
+> **État de la Documentation** : ✅ Aligné sur l'implémentation (avril 2026)  
+> **Module** : Production-ready (8 repositories, 7 controllers, services de calcul & automatisation)  
+> **Dernière Mise à Jour** : Avril 2026

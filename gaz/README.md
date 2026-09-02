@@ -117,7 +117,7 @@ stock résiduel dans le camion.
 
 ### 4. Trésorerie
 
-[tresorerie_screen.dart](../../lib/features/gaz/presentation/screens/sections/tresorerie_screen.dart)
+[finance_screen.dart](../../lib/features/gaz/presentation/screens/sections/finance_screen.dart)
 
 - Solde global de la maison mère
 - Historique des mouvements filtrable (`Aujourd'hui / Semaine / Mois / Tout`)

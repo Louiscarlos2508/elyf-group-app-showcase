@@ -61,7 +61,8 @@ Implémenté dans
 ### 2. Catalogue Produits
 
 Implémenté dans
-[catalog_screen.dart](../../lib/features/boutique/presentation/screens/sections/catalog_screen.dart).
+[stock_screen.dart](../../lib/features/boutique/presentation/screens/sections/stock_screen.dart)
+(liste produits + création / édition).
 
 - Liste filtrable par recherche + catégorie
 - Création / édition d'un produit avec :
@@ -100,7 +101,7 @@ Implémenté dans
 ### 5. Créances
 
 Implémenté dans
-[credits_screen.dart](../../lib/features/boutique/presentation/screens/sections/credits_screen.dart).
+[treasury_credits_tab.dart](../../lib/features/boutique/presentation/screens/sections/treasury_credits_tab.dart).
 
 - Total créances en cours calculé depuis les ventes non soldées
 - Liste des ventes à crédit avec montant restant dû
@@ -113,7 +114,7 @@ Implémenté dans
 ### 6. Gestion Financière — Dépenses
 
 Implémenté dans
-[expenses_screen.dart](../../lib/features/boutique/presentation/screens/sections/expenses_screen.dart).
+[treasury_expenses_tab.dart](../../lib/features/boutique/presentation/screens/sections/treasury_expenses_tab.dart).
 
 - Total des dépenses du jour + résumé mensuel
 - Saisie d'une nouvelle dépense :

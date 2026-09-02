@@ -12,10 +12,11 @@ Project_Portfolio/
 │   ├── README.md              # Ce fichier
 │   └── assets/                # Screenshots transverses (login, switch, splash)
 ├── eau_minerale/   ✅         # 31 screenshots — production / ventes / salaires
-├── gaz/            ✅         # Vues Manager + POS — tournées multi-étapes
-├── orange_money/   ✅         # Vues Dealer + Agent — cash-in/out + commissions
-├── boutique/       ✅         # POS commerce détail + chaînage tickets
-└── immobilier/     ✅         # Locations + encaissement loyers + rapports
+├── gaz/            ✅         # 38 screenshots — vues Manager + POS, tournées
+├── orange_money/   ✅         # 32 screenshots — vues Dealer + Agent, cash-in/out
+├── boutique/       ✅         # 10 screenshots — POS commerce détail + chaînage
+├── immobilier/     ✅         # 13 screenshots — locations + encaissement loyers
+└── admin/          ✅         # 3 screenshots — console de pilotage 360° du groupe
 ```
 
 Chaque module suit la même structure :
@@ -23,6 +24,9 @@ Chaque module suit la même structure :
 ```
 <module>/
 ├── README.md                  # Vue d'ensemble + features + gallery + modèle de domaine
+├── docs/
+│   ├── ARCHITECTURE.md        # Détails d'architecture (couches, flux, patterns)
+│   └── IMPLEMENTATION.md      # Notes d'implémentation (patterns, best practices)
 └── assets/screenshots/        # Captures alignées sur l'implémentation
 ```
 

@@ -1,50 +1,79 @@
-# Module Administration
+# Module Administration — ELYF Group App
 
-**Console de pilotage 360° du groupe ELYF — vue transverse sur toutes les
-entreprises et tous les modules depuis un seul écran.**
+## 🎯 Vue d'Ensemble
 
-> Rôle réservé aux admins du groupe. Aucun accès depuis les apps opérateur.
+Le module **Administration** est la **console de pilotage 360° du groupe**
+ELYF : une vue transverse sur **toutes les entreprises** et **tous les
+modules** depuis un seul écran, réservé aux admins du groupe.
+
+Contrairement aux apps opérateur (offline-first sur Drift), le module admin
+lit **exclusivement Firestore** (données toujours fraîches, pas de cache
+local) — et utilise un **pattern Strategy** pour adapter la fiche de chaque
+entreprise à son métier.
+
+> Rôle réservé aux admins du groupe — aucun accès depuis les apps opérateur.
+
+### Caractéristiques Principales
+
+- 📈 **Dashboard groupe** — KPIs consolidés (CA, Dépenses, Bénéfice net, Marge) + graphique d'évolution journalière, filtres période
+- 🏢 **Organisation** — toutes les entreprises, fiche live avec onglets adaptés au métier (pattern Strategy)
+- 🚚 **Vue Gaz** — historique des tours + fiche tour live (Bilan · Recharge · POS · Grossistes · Timeline)
+- 📦 **Vue Eau Minérale** — stock + appros admin directes avec notification automatique
+- 🛒 **Vue Boutique** — performance, stock, trésorerie par point de vente
+- 👥 **Accès** — gestion des utilisateurs et rôles par module
+- 🔍 **Audit trail** complet + 🔔 notifications groupe
+- ⚡ Lecture **Firestore live** — données toujours fraîches
+
+Code source : [lib/features/administration/](../../lib/features/administration/)
 
 ---
 
-## Fonctionnalités
+## ✨ Fonctionnalités Implémentées
 
-### Tableau de bord groupe
-- 📈 **KPIs consolidés** (CA, Dépenses, Bénéfice net, Marge) filtrables par
+### 1. Tableau de Bord Groupe
+
+[admin_dashboard_section.dart](../../lib/features/administration/presentation/screens/sections/admin_dashboard_section.dart)
+
+- **KPIs consolidés** (CA, Dépenses, Bénéfice net, Marge) filtrables par
   période (Aujourd'hui / Semaine / Mois / Personnalisée)
-- 📉 **Graphique d'évolution journalière** CA vs Dépenses
-- ⚡ Données en direct (Firestore live — pas de cache Drift côté admin)
+- **Graphique d'évolution journalière** CA vs Dépenses
+- Données en direct (**Firestore live** — pas de cache Drift côté admin)
 
-### Organisation
-- 🏢 **Liste de toutes les entreprises** du groupe avec type et statut
-- 🔍 Recherche rapide par nom
-- 📊 **Stratégie par type d'entreprise** — chaque fiche adopte les onglets
-  adaptés au métier :
-  - *Boutique* → Performance · Ventes · Stock · Trésorerie · Audit
-  - *Gaz (mère)* → Résumé · Tours · POS · Trésorerie · Versements · Audit
-  - *Gaz POS* → Performance · Stock · Trésorerie · Audit
-  - *Eau Minérale* → Vue 360° stock, appros, historique
-  - *Orange Money* → Dashboard commissions, déclarations
-  - *Immobilier* → Propriétés, locataires, encaissements
+### 2. Organisation — Stratégie par entreprise
 
-### Vue Gaz — Tours (exemple)
+[dashboard_strategy.dart](../../lib/features/administration/presentation/screens/sections/strategies/dashboard_strategy.dart)
+
+- **Liste de toutes les entreprises** du groupe (type et statut), recherche par nom
+- Chaque fiche adopte des onglets **adaptés au métier** (pattern Strategy) :
+
+| Type d'entreprise | Onglets de la fiche |
+| --- | --- |
+| **Boutique** | Performance · Ventes · Stock · Trésorerie · Audit |
+| **Gaz (mère)** | Résumé · Tours · POS · Trésorerie · Versements · Audit |
+| **Gaz POS** | Performance · Stock · Trésorerie · Audit |
+| **Eau Minérale** | Vue 360° stock, appros, historique |
+| **Orange Money** | Dashboard commissions, déclarations |
+| **Immobilier** | Propriétés, locataires, encaissements |
+
+### 3. Vue Gaz — Tours
+
 - 📋 Historique des tours trié : **en cours d'abord**, puis clôturés, annulés
 - 🔍 **Fiche tour complète** (bottom sheet) : Bilan · Départ · Recharge
   fournisseur · POS · Grossistes · Dépenses transport · Stock restant · Timeline
-- Statuts tous couverts : Ouvert · Collecte · Recharge · Livraison ·
-  Encaissement · Clôture · Clôturé · Annulé
-- Passages multiples sur le même site **fusionnés** (un grossiste visité
-  deux fois n'apparaît qu'une fois, quantités cumulées)
+- Statuts tous couverts : Ouvert · Collecte · Recharge · Livraison · Encaissement · Clôture · Clôturé · Annulé
+- Passages multiples sur le même site **fusionnés** (un grossiste visité deux
+  fois n'apparaît qu'une fois, quantités cumulées)
 - Bilan « Vides collectées » exclut les échanges grossistes
 
-### Accès & Audit
+### 4. Accès & Audit
+
 - 👥 Gestion des utilisateurs et rôles par module
-- 🔍 Audit trail complet (toutes les actions critiques tracées)
-- 🔔 Notifications groupe
+- 🔍 **Audit trail** complet (toutes les actions critiques tracées)
+- 🔔 **Notifications** groupe
 
 ---
 
-## Captures d'écran
+## 📸 Screenshots
 
 ### Tableau de bord groupe
 
@@ -75,32 +104,53 @@ entreprises et tous les modules depuis un seul écran.**
 
 ---
 
-## Architecture technique (admin)
+## 🏗️ Architecture technique (admin)
 
 Le module admin lit **exclusivement Firestore** (pas de Drift) via des
-loaders dédiés (`AdminGazLoader`, `AdminBoutiqueLoader`…) pour ne pas
-dépendre de la sync layer des modules opérateur, souvent vide sur le device
-admin.
+loaders dédiés (`AdminGazLoader`, `AdminBoutiqueLoader`, `AdminEauLoader`…)
+pour ne pas dépendre de la sync layer des modules opérateur, souvent vide
+sur le device admin.
 
 ```
 features/administration/
 ├── data/services/
-│   ├── admin_gaz_loader.dart         # Stream live Firestore (tours, ventes, stocks…)
+│   ├── admin_gaz_loader.dart           # Stream live Firestore (tours, ventes, stocks…)
 │   ├── admin_boutique_loader.dart
 │   ├── admin_eau_loader.dart
-│   └── admin_supply_service.dart     # Appros admin → PO + notification user
+│   ├── admin_immobilier_loader.dart
+│   ├── admin_om_loader.dart
+│   ├── admin_financial_data_loader.dart
+│   └── admin_supply_service.dart       # Appros admin → PO + notification user
 ├── application/providers/
 │   ├── admin_gaz_providers.dart
-│   ├── admin_financial_providers.dart
+│   ├── admin_audit_providers.dart
 │   └── …
-└── presentation/screens/sections/strategies/
-    ├── dashboard_strategy.dart       # Dispatcher strategy par type d'entreprise
-    └── parts/
-        ├── gaz_strategy.dart
-        ├── boutique_strategy.dart
-        └── …
+└── presentation/screens/sections/
+    ├── admin_dashboard_section.dart    # Dashboard groupe
+    ├── admin_organizational_section.dart
+    ├── admin_enterprise_management_section.dart
+    ├── admin_access_section.dart
+    ├── admin_audit_trail_section.dart
+    └── strategies/
+        └── dashboard_strategy.dart     # Interface + `fromEnterprise` (pattern Strategy)
 ```
 
-**Pattern Strategy** : chaque type d'entreprise implémente
-`EnterpriseDashboardStrategy` (onglets + contenu), ce qui permet d'ajouter
-un nouveau type sans modifier le shell.
+**Pattern Strategy** : `EnterpriseDashboardStrategy` expose une interface
+(`getTabs` / `buildTabContent`) et `EnterpriseDashboardStrategy.fromEnterprise()`
+retourne la stratégie du type d'entreprise ; `_GroupStrategy` décline les onglets
+par permission. Ajouter un nouveau type ne modifie pas le shell.
+
+---
+
+## 🔗 Liens Utiles
+
+- 📁 [Code source du module](../../lib/features/administration/)
+- 🏠 [Retour au Portfolio](../)
+
+---
+
+## 📝 Notes
+
+> **État de la Documentation** : ✅ Aligné sur l'implémentation (avril 2026)  
+> **Rôle** : Administration groupe (réservé aux admins)  
+> **Dernière Mise à Jour** : Avril 2026

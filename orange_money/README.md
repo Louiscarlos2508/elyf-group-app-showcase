@@ -103,26 +103,24 @@ Implémenté dans
 
 ### 5. Réconciliation des Liquidités
 
-#### 5.1 Déclaration Matin
-[morning_declaration_screen.dart](../../lib/features/orange_money/presentation/screens/sections/morning_declaration_screen.dart)
+#### 5.1 Session Journalière (Déclaration Matin + Comptage + Bilan)
 
-- Saisie des **soldes actuels** (Cash + Orange Money) en début de journée
-- Référence visible aux soldes de la veille
+[daily_session_screen.dart](../../lib/features/orange_money/presentation/screens/sections/daily_session_screen.dart)
+
+Flux guidé en 3 étapes :
+
+1. **Résumé du jour** — KPIs (dépôts, retraits, nb transactions, volume total)
+   + **déclaration matin** (soldes Cash + OM en début de journée, référence aux
+   soldes de la veille)
+2. **Comptage** — saisie des soldes réels (Cash + OM)
+3. **Bilan / Validation** — comparaison **théorique vs réel** (théorique
+   `= solde matin + cash-in − cash-out`), affichage de l'écart et **validation
+   avec justification obligatoire** si l'écart dépasse le seuil
+
 - **Auto-clôture** : si la veille n'a pas été clôturée, le système la ferme
   automatiquement avec les valeurs théoriques et demande validation
 
-#### 5.2 Bilan de Journée
-[daily_summary_screen.dart](../../lib/features/orange_money/presentation/screens/sections/daily_summary_screen.dart)
-
-Flux complet en 5 étapes :
-
-1. **Résumé du jour** (KPIs : dépôts, retraits, nb transactions, volume total)
-2. **Soldes théoriques** calculés `= solde matin + cash-in − cash-out`
-3. **Saisie des soldes réels** (Cash + OM)
-4. **Comparaison théorique vs réel** → affichage de l'écart
-5. **Validation** avec **justification obligatoire** si écart > seuil
-
-#### 5.3 Historique Pointages
+#### 5.2 Historique Pointages
 [liquidity_screen.dart](../../lib/features/orange_money/presentation/screens/sections/liquidity_screen.dart)
 
 - Statut du jour en lecture seule avec liens vers les écrans dédiés
